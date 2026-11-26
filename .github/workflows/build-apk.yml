@@ -1,4 +1,4 @@
-name: Build APK
+name: Build APKs
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
           echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
           echo "SIGNING_KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
 
-      - name: Build signed APK
+      - name: Build signed APKs
         env:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
@@ -46,27 +46,39 @@ jobs:
           ./gradlew assembleRelease --no-daemon
           VERSION="1.0.${GITHUB_RUN_NUMBER}"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
-          cp app/build/outputs/apk/release/app-release.apk my-android-app.apk
-          cp my-android-app.apk "my-android-app-v$VERSION.apk"
+          mkdir -p out
+          # Stable names (same download link every build)
+          cp app/build/outputs/apk/release/app-release.apk      out/wifi-scanner.apk
+          cp alarm/build/outputs/apk/release/alarm-release.apk   out/loud-alarm.apk
+          # Versioned copies (kept in the per-version release)
+          cp out/wifi-scanner.apk "out/wifi-scanner-v$VERSION.apk"
+          cp out/loud-alarm.apk   "out/loud-alarm-v$VERSION.apk"
 
-      - name: Upload APK (Actions tab)
+      - name: Upload APKs (Actions tab)
         uses: actions/upload-artifact@v4
         with:
-          name: my-android-app-v${{ env.VERSION }}
-          path: my-android-app-v${{ env.VERSION }}.apk
+          name: apks-v${{ env.VERSION }}
+          path: out/*.apk
 
       - name: Publish releases
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # 1) Permanent release for this version (kept forever)
-          gh release create "v$VERSION" "my-android-app-v$VERSION.apk" \
-            --title "v$VERSION" \
-            --notes "Build $GITHUB_RUN_NUMBER from commit ${GITHUB_SHA::7}: $(git log -1 --pretty=%s)"
+          MSG="$(git log -1 --pretty=%s)"
 
-          # 2) 'latest' release — same download link every time
+          # 1) Permanent release for this version (kept forever)
+          gh release create "v$VERSION" \
+            "out/wifi-scanner-v$VERSION.apk" "out/loud-alarm-v$VERSION.apk" \
+            --title "v$VERSION" \
+            --notes "Build $GITHUB_RUN_NUMBER from ${GITHUB_SHA::7}: $MSG"
+
+          # 2) 'latest' release — same download links every time
           gh release delete latest --yes --cleanup-tag || true
-          gh release create latest my-android-app.apk \
+          gh release create latest \
+            "out/wifi-scanner.apk" "out/loud-alarm.apk" \
             --title "Latest build (v$VERSION)" \
-            --notes "Newest version: v$VERSION. Download my-android-app.apk on your phone and tap it to install or update." \
-            --latest
+            --latest \
+            --notes "Newest version: v$VERSION. Download an APK on your phone and tap it to install or update.
+
+- WiFi Scanner: wifi-scanner.apk
+- Loud Alarm: loud-alarm.apk"
