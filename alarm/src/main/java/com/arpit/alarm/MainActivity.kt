@@ -79,7 +79,7 @@ private fun AlarmApp() {
             if (!running) {
                 Text("⏰", fontSize = 72.sp)
                 Text(
-                    "Loud Alarm",
+                    "File Share",
                     color = Color.White,
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
