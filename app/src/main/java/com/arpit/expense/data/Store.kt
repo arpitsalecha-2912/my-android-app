@@ -5,6 +5,7 @@ import com.arpit.expense.model.Txn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import java.io.File
 
@@ -24,7 +25,7 @@ class Store(context: Context) {
     private fun load() {
         try {
             if (file.exists()) {
-                val list = json.decodeFromString<List<Txn>>(file.readText())
+                val list = json.decodeFromString(ListSerializer(Txn.serializer()), file.readText())
                 _txns.value = list.sortedByDescending { it.timestamp }
                 ids.addAll(list.map { it.id })
             }
@@ -32,7 +33,7 @@ class Store(context: Context) {
     }
 
     private fun persist() {
-        try { file.writeText(json.encodeToString(_txns.value)) } catch (_: Exception) { }
+        try { file.writeText(json.encodeToString(ListSerializer(Txn.serializer()), _txns.value)) } catch (_: Exception) { }
     }
 
     fun has(id: String) = ids.contains(id)
