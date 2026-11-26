@@ -1,4 +1,4 @@
-package com.arpit.myapp.ui
+package com.arpit.expense.ui
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -11,14 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
+private val LightGreen = Color(0xFF0F9D58)
+private val DarkGreen = Color(0xFF6ED59E)
+
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
     val dark = isSystemInDarkTheme()
     val ctx = LocalContext.current
     val scheme = when {
         Build.VERSION.SDK_INT >= 31 -> if (dark) dynamicDarkColorScheme(ctx) else dynamicLightColorScheme(ctx)
-        dark -> darkColorScheme(primary = Color(0xFF8AB4F8), secondary = Color(0xFF8AB4F8))
-        else -> lightColorScheme(primary = Color(0xFF2563EB), secondary = Color(0xFF2563EB))
+        dark -> darkColorScheme(primary = DarkGreen, secondary = DarkGreen)
+        else -> lightColorScheme(primary = LightGreen, secondary = LightGreen)
     }
     MaterialTheme(colorScheme = scheme, content = content)
 }

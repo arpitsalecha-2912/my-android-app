@@ -1,5 +1,5 @@
 <resources>
-    <color name="bg">#FFF8F9FC</color>
-    <color name="bg_dark">#FF111318</color>
-    <color name="icon_bg">#FF2563EB</color>
+    <color name="bg">#FFF6F7F9</color>
+    <color name="bg_dark">#FF0F1115</color>
+    <color name="icon_bg">#FF0F9D58</color>
 </resources>

@@ -2,18 +2,18 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
-// Build number comes from GitHub Actions (1, 2, 3...). Local builds use 1.
 val buildNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
 val keystorePath: String? = System.getenv("SIGNING_KEYSTORE_PATH")
 
 android {
-    namespace = "com.arpit.myapp"
+    namespace = "com.arpit.expense"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.arpit.myapp"
+        applicationId = "com.arpit.expense"
         minSdk = 26
         targetSdk = 35
         versionCode = buildNumber
@@ -60,10 +60,11 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.activity:activity-compose:1.9.3")
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 }

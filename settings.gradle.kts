@@ -12,6 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "MyAndroidApps"
+rootProject.name = "ExpenseTracker"
 include(":app")
-include(":alarm")

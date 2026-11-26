@@ -1,4 +1,4 @@
-name: Build APKs
+name: Build APK
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
           echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
           echo "SIGNING_KEYSTORE_PATH=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
 
-      - name: Build signed APKs
+      - name: Build signed APK
         env:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
@@ -47,40 +47,25 @@ jobs:
           VERSION="1.0.${GITHUB_RUN_NUMBER}"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           mkdir -p out
-          # Stable names (same download link every build)
-          cp app/build/outputs/apk/release/app-release.apk      out/wifi-scanner.apk
-          cp alarm/build/outputs/apk/release/alarm-release.apk   out/loud-alarm.apk
-          # Versioned copies (kept in the per-version release)
-          cp out/wifi-scanner.apk "out/wifi-scanner-v$VERSION.apk"
-          cp out/loud-alarm.apk   "out/loud-alarm-v$VERSION.apk"
+          cp app/build/outputs/apk/release/app-release.apk out/money-tracker.apk
+          cp out/money-tracker.apk "out/money-tracker-v$VERSION.apk"
 
-      - name: Upload APKs (Actions tab)
+      - name: Upload APK (Actions tab)
         uses: actions/upload-artifact@v4
         with:
-          name: apks-v${{ env.VERSION }}
-          path: out/*.apk
+          name: money-tracker-v${{ env.VERSION }}
+          path: out/money-tracker.apk
 
       - name: Publish releases
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           MSG="$(git log -1 --pretty=%s)"
-
-          # 1) Permanent release for this version (kept forever)
-          gh release create "v$VERSION" \
-            "out/wifi-scanner-v$VERSION.apk" "out/loud-alarm-v$VERSION.apk" \
+          gh release create "v$VERSION" "out/money-tracker-v$VERSION.apk" \
             --title "v$VERSION" \
             --notes "Build $GITHUB_RUN_NUMBER from ${GITHUB_SHA::7}: $MSG"
-
-          # 2) 'latest' release — same download links every time
-          printf '%s\n' \
-            "Newest version: v$VERSION. Download an APK on your phone and tap it to install or update." \
-            "" \
-            "- WiFi Scanner: wifi-scanner.apk" \
-            "- Loud Alarm: loud-alarm.apk" > notes.md
           gh release delete latest --yes --cleanup-tag || true
-          gh release create latest \
-            "out/wifi-scanner.apk" "out/loud-alarm.apk" \
+          gh release create latest "out/money-tracker.apk" \
             --title "Latest build (v$VERSION)" \
             --latest \
-            --notes-file notes.md
+            --notes "Download money-tracker.apk on your phone and tap to install or update."

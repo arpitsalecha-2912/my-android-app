@@ -1,23 +1,23 @@
-# My Android Apps
+# Money Tracker
 
-This repo builds **multiple Android apps**, each installed separately on your phone. Every push to `main` builds and signs them automatically.
+A personal expense tracker for Android. Reads your bank transaction SMS on-device to log every debit and credit automatically, with a dashboard, categories, and reports. All data stays on your phone — nothing is uploaded.
 
-## Get the apps (on your phone)
+## Install
 
-Open the **Releases** page and download from the latest build, or use these direct links:
+Open on your phone: **Releases → Latest build → `money-tracker.apk`**, or the direct link:
+`releases/download/latest/money-tracker.apk`
 
-- **WiFi Scanner** — see your Wi-Fi details, find devices on the network, full phone info, prank buddies:
-  `releases/download/latest/wifi-scanner.apk`
-- **Loud Alarm** — one Start button: full-volume alarm + lock screen; unlock to Stop:
-  `releases/download/latest/loud-alarm.apk`
+Tap the file → allow "Install unknown apps" → Install. Each push to `main` builds a new signed APK at the same link, so it installs over the old one as an update.
 
-Tap the file → allow "Install unknown apps" → Install. Both are signed with the same key, so new builds install over the old app as updates.
+## Features
+- Auto-import transactions from bank SMS (read-only, on-device)
+- Add transactions manually
+- Dashboard: month spend, income, net, spending by category, recent list
+- Reports: last-6-months trend, category donut, top places
+- Auto-categorisation (Food, Shopping, Fuel, Bills, Travel, and more)
 
-## Apps in this repo
+## Permissions
+- `READ_SMS` / `RECEIVE_SMS` — only to detect bank transaction messages. Parsing happens locally; messages are never sent anywhere.
 
-| App | Module | Package |
-|-----|--------|---------|
-| WiFi Scanner | `app` | `com.arpit.myapp` |
-| Loud Alarm | `alarm` | `com.arpit.alarm` |
-
-To add another app later: add a new module folder, `include(":name")` in `settings.gradle.kts`, and two copy lines in `.github/workflows/build-apk.yml`.
+## Build
+`com.arpit.expense`, module `app`. CI builds and signs the APK on every push.
