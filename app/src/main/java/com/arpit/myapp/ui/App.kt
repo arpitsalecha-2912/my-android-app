@@ -24,7 +24,10 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
@@ -79,10 +82,17 @@ fun App(vm: MainViewModel = viewModel()) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (tab == 0) "WiFi Scanner" else "This Device", fontWeight = FontWeight.SemiBold) },
+                title = {
+                    Text(
+                        when (tab) { 0 -> "WiFi Scanner"; 1 -> "This Device"; else -> "Prank Buddies" },
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                },
                 actions = {
-                    IconButton(onClick = { if (tab == 0) vm.refreshNet() else vm.refreshDevice() }) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
+                    if (tab != 2) {
+                        IconButton(onClick = { if (tab == 0) vm.refreshNet() else vm.refreshDevice() }) {
+                            Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
+                        }
                     }
                 },
             )
@@ -99,6 +109,11 @@ fun App(vm: MainViewModel = viewModel()) {
                     icon = { Icon(Icons.Filled.Info, contentDescription = null) },
                     label = { Text("Device") },
                 )
+                NavigationBarItem(
+                    selected = tab == 2, onClick = { tab = 2 },
+                    icon = { Icon(Icons.Filled.Face, contentDescription = null) },
+                    label = { Text("Prank") },
+                )
             }
         },
     ) { padding ->
@@ -106,7 +121,11 @@ fun App(vm: MainViewModel = viewModel()) {
             Modifier.fillMaxSize().padding(padding),
             contentAlignment = Alignment.TopCenter,
         ) {
-            if (tab == 0) NetworkScreen(vm) else DeviceScreen(vm)
+            when (tab) {
+                0 -> NetworkScreen(vm)
+                1 -> DeviceScreen(vm)
+                else -> BuddiesScreen()
+            }
         }
     }
 }
@@ -379,6 +398,20 @@ private fun DeviceScreen(vm: MainViewModel) {
 }
 
 // ======================= SHARED =======================
+
+/** A centered, max-width scrolling column for simple stacked content. */
+@Composable
+fun AdaptiveColumn(content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit) {
+    Column(
+        modifier = Modifier
+            .widthIn(max = 640.dp)
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        content = content,
+    )
+}
 
 @Composable
 private fun SectionCard(content: @Composable () -> Unit) {
