@@ -73,12 +73,14 @@ jobs:
             --notes "Build $GITHUB_RUN_NUMBER from ${GITHUB_SHA::7}: $MSG"
 
           # 2) 'latest' release — same download links every time
+          printf '%s\n' \
+            "Newest version: v$VERSION. Download an APK on your phone and tap it to install or update." \
+            "" \
+            "- WiFi Scanner: wifi-scanner.apk" \
+            "- Loud Alarm: loud-alarm.apk" > notes.md
           gh release delete latest --yes --cleanup-tag || true
           gh release create latest \
             "out/wifi-scanner.apk" "out/loud-alarm.apk" \
             --title "Latest build (v$VERSION)" \
             --latest \
-            --notes "Newest version: v$VERSION. Download an APK on your phone and tap it to install or update.
-
-- WiFi Scanner: wifi-scanner.apk
-- Loud Alarm: loud-alarm.apk"
+            --notes-file notes.md
