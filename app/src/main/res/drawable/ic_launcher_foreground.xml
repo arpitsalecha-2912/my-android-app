@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- simple white phone with a dot -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M42,30h24a4,4 0,0 1,4 4v40a4,4 0,0 1,-4 4h-24a4,4 0,0 1,-4 -4v-40a4,4 0,0 1,4 -4z" />
+    <path
+        android:fillColor="#FF2563EB"
+        android:pathData="M44,36h20v32h-20z" />
+    <path
+        android:fillColor="#FF2563EB"
+        android:pathData="M54,73m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+</vector>
